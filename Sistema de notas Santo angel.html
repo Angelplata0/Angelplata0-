@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Notas</title>
+</head>
+<body>
+    <h1>Registro de Notas</h1>
+    <label for="profesor">Profesor:</label>
+    <select id="profesor" onchange="cargarMaterias()">
+        <option value="">Seleccionar</option>
+        <option value="profesor1">Profesor 1</option>
+        <option value="profesor2">Profesor 2</option>
+    </select>
+
+    <div id="materiaContainer" style="display: none;">
+        <label for="materia">Materia:</label>
+        <select id="materia" onchange="cargarGrados()">
+            <option value="">Seleccionar</option>
+        </select>
+    </div>
+
+    <div id="gradoContainer" style="display: none;">
+        <label for="grado">Grado:</label>
+        <select id="grado" onchange="mostrarTabla()">
+            <option value="">Seleccionar</option>
+        </select>
+    </div>
+
+    <div id="notasContainer" style="display: none;">
+        <label for="numNotas">Número de Notas:</label>
+        <select id="numNotas" onchange="actualizarTabla()">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+
+    <div id="tablaContainer" style="display: none;">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th id="nota1Header">Nota 1</th>
+                    <th id="nota2Header">Nota 2</th>
+                    <th id="nota3Header">Nota 3</th>
+                    <th id="nota4Header">Nota 4</th>
+                    <th id="nota5Header">Nota 5</th>
+                    <th id="nota6Header">Nota 6</th>
+                    <th id="nota7Header">Nota 7</th>
+                    <th id="nota8Header">Nota 8</th>
+                    <th id="nota9Header">Nota 9</th>
+                    <th id="nota10Header">Nota 10</th>
+                    <th>Puntos Positivos</th>
+                    <th>Puntos Negativos</th>
+                    <th>Promedio</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody">
+                <!-- Aquí se llenarán los estudiantes -->
+            </tbody>
+        </table>
+        <button onclick="guardarDatos()">Guardar</button>
+    </div>
+
+    <!-- Sección para el manual de uso -->
+    <button id="ManualButton">Mostrar Manual</button>
+    <div id="Manual" style="display: none;">
+        <h2>Manual de Uso</h2>
+        <p>Aquí irá la información del manual.</p>
+        <button id="backButton">Volver</button>
+    </div>
+
+    <script>
+        const profesores = {
+            'profesor1': {
+                materias: ['Matemáticas', 'Ciencias'],
+                grados: ['Grado 1', 'Grado 2']
+            },
+            'profesor2': {
+                materias: ['Lenguaje', 'Historia'],
+                grados: ['Grado 3', 'Grado 4']
+            }
+        };
+
+        let estudiantes = [];
+
+        function cargarMaterias() {
+            const profesor = document.getElementById('profesor').value;
+            const materiaSelect = document.getElementById('materia');
+
+            materiaSelect.innerHTML = '<option value="">Seleccionar</option>';
+
+            if (profesor) {
+                const materias = profesores[profesor].materias;
+                materias.forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia;
+                    option.text = materia;
+                    materiaSelect.appendChild(option);
+                });
+                document.getElementById('materiaContainer').style.display = 'block';
+            } else {
+                document.getElementById('materiaContainer').style.display = 'none';
+                document.getElementById('gradoContainer').style.display = 'none';
+                document.getElementById('notasContainer').style.display = 'none';
+                document.getElementById('tablaContainer').style.display = 'none';
+            }
+        }
+
+        function cargarGrados() {
+            const profesor = document.getElementById('profesor').value;
+            const gradoSelect = document.getElementById('grado');
+
+            gradoSelect.innerHTML = '<option value="">Seleccionar</option>';
+
+            if (profesor) {
+                const grados = profesores[profesor].grados;
+                grados.forEach(grado => {
+                    const option = document.createElement('option');
+                    option.value = grado;
+                    option.text = grado;
+                    gradoSelect.appendChild(option);
+                });
+                document.getElementById('gradoContainer').style.display = 'block';
+            } else {
+                document.getElementById('gradoContainer').style.display = 'none';
+                document.getElementById('notasContainer').style.display = 'none';
+                document.getElementById('tablaContainer').style.display = 'none';
+            }
+        }
+
+        function mostrarTabla() {
+            const grado = document.getElementById('grado').value;
+            if (grado) {
+                estudiantes = [
+                    { nombre: "Juan Pérez", notas: [] },
+                    { nombre: "María Gómez", notas: [] },
+                    { nombre: "Carlos Ruiz", notas: [] }
+                ];
+
+                const tablaBody = document.getElementById('tablaBody');
+                tablaBody.innerHTML = '';
+
+                estudiantes.forEach(estudiante => {
+                    const row = document.createElement('tr');
+                    const nombreCell = document.createElement('td');
+                    nombreCell.textContent = estudiante.nombre;
+                    row.appendChild(nombreCell);
+
+                    for (let i = 1; i <= 10; i++) {
+                        const notaCell = document.createElement('td');
+                        notaCell.innerHTML = `<input type="number" id="nota${i}_${estudiante.nombre}" style="display: none;" min="0" max="5">`;
+                        notaCell.id = `nota${i}Cell_${estudiante.nombre}`;
+                        row.appendChild(notaCell);
+                    }
+
+                    const puntosPositivosCell = document.createElement('td');
+                    puntosPositivosCell.innerHTML = `<input type="number" id="puntosPos_${estudiante.nombre}" min="0">`;
+                    row.appendChild(puntosPositivosCell);
+
+                    const puntosNegativosCell = document.createElement('td');
+                    puntosNegativosCell.innerHTML = `<input type="number" id="puntosNeg_${estudiante.nombre}" min="0">`;
+                    row.appendChild(puntosNegativosCell);
+
+                    const promedioCell = document.createElement('td');
+                    promedioCell.innerHTML = `<span id="promedio_${estudiante.nombre}">0.0</span>`;
+                    row.appendChild(promedioCell);
+
+                    tablaBody.appendChild(row);
+                });
+
+                document.getElementById('notasContainer').style.display = 'block';
+                document.getElementById('tablaContainer').style.display = 'block';
+            } else {
+                document.getElementById('notasContainer').style.display = 'none';
+                document.getElementById('tablaContainer').style.display = 'none';
+            }
+        }
+
+        function actualizarTabla() {
+            const numNotas = document.getElementById('numNotas').value;
+
+            for (let i = 1; i <= 10; i++) {
+                const notaHeader = document.getElementById(`nota${i}Header`);
+                const notaCells = document.querySelectorAll(`[id^=nota${i}Cell_]`);
+
+                if (i <= numNotas) {
+                    notaHeader.style.display = 'table-cell';
+                    notaCells.forEach(cell => cell.firstChild.style.display = 'inline');
+                } else {
+                    notaHeader.style.display = 'none';
+                    notaCells.forEach(cell => cell.firstChild.style.display = 'none');
+                }
+            }
+        }
+
+        function guardarDatos() {
+            alert('Datos guardados exitosamente.');
+        }
+
+        document.getElementById('ManualButton').addEventListener('click', function() {
+            document.getElementById('Manual').style.display = 'block';
+        });
+
+        document.getElementById('backButton').addEventListener('click', function() {
+            document.getElementById('Manual').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
